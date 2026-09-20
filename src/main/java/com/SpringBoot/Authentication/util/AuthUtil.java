@@ -1,6 +1,7 @@
 package com.SpringBoot.Authentication.util;
 
 import com.SpringBoot.Authentication.entity.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,5 +29,14 @@ public class AuthUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiration
                 .signWith(getSecretKey())
                 .compact();
+    }
+
+    public String getUserNameFromToken(String token) {
+        Claims claims=Jwts.parser()
+                .verifyWith((getSecretKey()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.getSubject();
     }
 }
