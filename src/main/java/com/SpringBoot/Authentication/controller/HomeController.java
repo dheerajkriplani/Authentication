@@ -1,5 +1,7 @@
 package com.SpringBoot.Authentication.controller;
 
+import com.SpringBoot.Authentication.entity.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,7 @@ public class HomeController {
     }
     @GetMapping("/admin/two")
     public String admin2() {
+//        User user= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return " Admin Page_2 !";
     }
 }
