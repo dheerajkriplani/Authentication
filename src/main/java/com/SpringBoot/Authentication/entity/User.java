@@ -48,4 +48,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private AuthProviderType authProviderType;
+
+    @OneToOne(mappedBy = "user")
+    transient private RefreshToken refreshToken;
 }

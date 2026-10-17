@@ -4,14 +4,12 @@ import com.SpringBoot.Authentication.dto.LoginRequestDto;
 import com.SpringBoot.Authentication.dto.LoginResponseDto;
 import com.SpringBoot.Authentication.dto.SignUpRequestDto;
 import com.SpringBoot.Authentication.dto.SignUpResponseDto;
-import com.SpringBoot.Authentication.entity.AuthProviderType;
-import com.SpringBoot.Authentication.entity.Patient;
-import com.SpringBoot.Authentication.entity.RoleType;
-import com.SpringBoot.Authentication.entity.User;
+import com.SpringBoot.Authentication.entity.*;
 import com.SpringBoot.Authentication.repo.PatientRepository;
 import com.SpringBoot.Authentication.repo.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,7 +34,11 @@ public class AuthService {
 
     private final PatientRepository patientRepository;
 
+    @Autowired
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 
@@ -50,10 +52,13 @@ public class AuthService {
 
         String token = authUtil.generateAccessToken(user);
 
+        RefreshToken refreshToken=refreshTokenService.generateRefreshToken(user.getUsername());
+
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
         loginResponseDto.setJwtToken(token);
         loginResponseDto.setUserId(user.getId());
+        loginResponseDto.setRefreshToken(refreshToken.getRefreshToken());
         return loginResponseDto;
     }
 
@@ -122,7 +127,7 @@ public class AuthService {
         }
 
         //login
-        LoginResponseDto loginResponseDto = new LoginResponseDto(authUtil.generateAccessToken(user),user.getId());
+        LoginResponseDto loginResponseDto = new LoginResponseDto(authUtil.generateAccessToken(user),user.getId(),"");
 
         return ResponseEntity.ok(loginResponseDto);
     }

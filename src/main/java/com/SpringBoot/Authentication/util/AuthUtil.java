@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Locale;
 
 import io.jsonwebtoken.security.Keys;
 
@@ -23,6 +22,9 @@ public class AuthUtil {
     @Value("${JWT_SECRET_KEY}")
     private String jwtSecretKey;
 
+    @Value("${JWT_TTL}")
+    private long jwtTTL;
+
     public SecretKey getSecretKey(){
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
@@ -31,7 +33,7 @@ public class AuthUtil {
                 .subject(user.getUsername())
                 .claim("userId", user.getId())
                 .issuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiration
+                .setExpiration(new Date(System.currentTimeMillis() + jwtTTL)) // 1 hour expiration
                 .signWith(getSecretKey())
                 .compact();
     }

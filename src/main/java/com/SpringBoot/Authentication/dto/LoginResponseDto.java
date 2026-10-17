@@ -13,4 +13,6 @@ public class LoginResponseDto {
     String jwtToken;
 
     Long userId;
+
+    String refreshToken;
 }
